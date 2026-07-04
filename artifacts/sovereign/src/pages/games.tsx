@@ -1,59 +1,61 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Gamepad2, Search, Zap, Code2, ExternalLink, Pencil } from 'lucide-react';
+import { Gamepad2, Search, Zap, Code2, ExternalLink } from 'lucide-react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { useAdmin } from '@/contexts/admin-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScriptPopup } from '@/components/script-popup';
 import type { Game } from '@/components/admin-panel';
 
 const DEFAULT_GAMES: Game[] = [
-  { name: 'Blox Fruits',     status: 'Active',   link: '', logo: '' },
-  { name: 'Pet Simulator X', status: 'Active',   link: '', logo: '' },
-  { name: 'Anime Defenders', status: 'Active',   link: '', logo: '' },
-  { name: 'King Legacy',     status: 'Active',   link: '', logo: '' },
-  { name: 'Fisch',           status: 'Active',   link: '', logo: '' },
+  { name: 'Blox Fruits',     status: 'Active', link: '', logo: '' },
+  { name: 'Pet Simulator X', status: 'Active', link: '', logo: '' },
+  { name: 'Anime Defenders', status: 'Active', link: '', logo: '' },
+  { name: 'King Legacy',     status: 'Active', link: '', logo: '' },
+  { name: 'Fisch',           status: 'Active', link: '', logo: '' },
 ];
 
 export default function Games() {
   const [games]     = useLocalStorage<Game[]>('sovereign_games', DEFAULT_GAMES);
   const [gamesPage] = useLocalStorage('sovereign_games_page', { subtitle: 'Powerful scripts for the most popular Roblox games.' });
-  const [search, setSearch]       = useState('');
+  const [search, setSearch]             = useState('');
   const [isScriptOpen, setIsScriptOpen] = useState(false);
-  const { isAdmin, openAdmin } = useAdmin();
 
   const filtered = games.filter((g) => g.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
-      >
-        <div className="flex items-start gap-4">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2 uppercase tracking-tight">
-              Supported <span className="text-primary gold-glow">Games</span>
-            </h1>
-            <p className="text-muted-foreground">{gamesPage.subtitle}</p>
-          </div>
-          {isAdmin && (
-            <button onClick={openAdmin} title="Edit games in admin panel"
-              className="mt-1 p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors shrink-0">
-              <Pencil size={16} />
-            </button>
-          )}
-        </div>
+    <div className="max-w-5xl mx-auto px-4 py-12 md:py-20">
 
-        <div className="relative w-full md:w-72">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-muted-foreground" />
+      {/* Header — centered, vertical, matching Get Key / Premium */}
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-10"
+      >
+        <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
+          <Gamepad2 className="w-7 h-7 text-primary" />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-3">
+          Supported <span className="text-primary gold-glow">Games</span>
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+          {gamesPage.subtitle}
+        </p>
+
+        {/* Search — below the headline */}
+        <div className="relative max-w-sm mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-muted-foreground" />
           </div>
-          <Input type="text" placeholder="Search games..." value={search} onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-[#111111] border-white/10 h-12 rounded-xl focus-visible:ring-primary/50 text-white" />
+          <Input
+            type="text"
+            placeholder="Search games..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10 bg-[#111111] border-white/10 h-12 rounded-xl focus-visible:ring-primary/50 text-white"
+          />
         </div>
       </motion.div>
 
+      {/* Game cards */}
       {filtered.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="text-center py-20 bg-[#111111] rounded-2xl border border-white/5">

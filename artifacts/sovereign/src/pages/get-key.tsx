@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
-import { ShieldCheck, Link as LinkIcon, CheckCircle2, Crown, Key, Check, Pencil } from 'lucide-react';
+import { ShieldCheck, Link as LinkIcon, CheckCircle2, Crown, Key, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { useAdmin } from '@/contexts/admin-context';
 import { Link } from 'wouter';
 
 const DEFAULT_KEY_PAGE = {
@@ -34,7 +33,6 @@ const STEP_ICONS = [
 export default function GetKey() {
   const [keyPage] = useLocalStorage('sovereign_key_page', DEFAULT_KEY_PAGE);
   const [premium] = useLocalStorage('sovereign_premium', { premiumPrice: '$4.99', premiumPeriod: '/ month' } as any);
-  const { isAdmin, openAdmin } = useAdmin();
 
   const premiumFeatures = (keyPage.premiumCardFeatures || DEFAULT_KEY_PAGE.premiumCardFeatures).split('\n').filter(Boolean);
   const freeFeatures    = (keyPage.freeCardFeatures    || DEFAULT_KEY_PAGE.freeCardFeatures).split('\n').filter(Boolean);
@@ -47,12 +45,6 @@ export default function GetKey() {
           <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full">
             <Key className="w-7 h-7 text-primary" />
           </div>
-          {isAdmin && (
-            <button onClick={openAdmin} title="Edit key page"
-              className="p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors">
-              <Pencil size={16} />
-            </button>
-          )}
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-3">
           {keyPage.title}{' '}<span className="text-primary gold-glow">{keyPage.titleHighlight}</span>
