@@ -13,7 +13,10 @@ export default function Home() {
     name: 'Sovereign',
     tagline: 'PXG',
     discord: 'https://discord.gg',
-  });
+    logoUrl: '',
+  } as any);
+
+  const logoSrc = (siteInfo as any).logoUrl || sovereignLogo;
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-4 relative min-h-[calc(100vh-64px)]">
@@ -27,16 +30,17 @@ export default function Home() {
           <div className="relative mb-6">
             <div className="absolute inset-0 scale-150 bg-primary/15 blur-[60px] rounded-full pointer-events-none" />
             <img
-              src={sovereignLogo}
+              src={logoSrc}
               alt={siteInfo.name}
               className="w-36 h-36 md:w-48 md:h-48 object-contain relative z-10 drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]"
               style={{ mixBlendMode: 'lighten' }}
+              onError={(e) => { (e.target as HTMLImageElement).src = sovereignLogo; }}
             />
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase mb-2">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white uppercase mb-1">
             <span className="gold-glow text-primary">{siteInfo.name}</span>
           </h1>
-          <p className="text-sm md:text-base font-semibold tracking-[0.3em] text-muted-foreground uppercase">
+          <p className="text-sm font-semibold tracking-[0.2em] text-muted-foreground uppercase">
             {siteInfo.tagline}
           </p>
         </motion.div>

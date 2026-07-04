@@ -77,8 +77,8 @@ export default function KeySystem() {
         </div>
       </header>
 
-      {/* Main — narrow column like screenshot */}
-      <main className="flex-1 relative z-10 max-w-2xl mx-auto w-full px-4 py-8 flex flex-col gap-4">
+      {/* Main — narrow column, centered vertically */}
+      <main className="flex-1 relative z-10 max-w-2xl mx-auto w-full px-4 flex flex-col justify-center gap-4 py-8">
 
         {/* Keys box */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
