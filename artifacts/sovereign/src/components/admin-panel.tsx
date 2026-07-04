@@ -92,7 +92,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 export function AdminPanel() {
-  const { isAdminOpen, closeAdmin, setIsAdmin } = useAdmin();
+  const { isAdminOpen, closeAdmin, isAdmin, setIsAdmin } = useAdmin();
   const [step, setStep]         = useState<'password' | 'panel'>('password');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw]     = useState(false);
