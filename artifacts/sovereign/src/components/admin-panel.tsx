@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown, KeyRound, X, Plus, Trash2, Save,
   Link as LinkIcon, Settings, Gamepad2, Star, Palette,
-  ShieldCheck, Eye, EyeOff
+  ShieldCheck, Eye, EyeOff, ImageIcon
 } from 'lucide-react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useAdmin } from '@/contexts/admin-context';
@@ -39,13 +39,24 @@ const DEFAULT_GAMES: Game[] = [
 const DEFAULT_KEY_PAGE = {
   title: 'Get Your',
   titleHighlight: 'Key',
-  subtitle: 'Follow the steps below to get your free key and unlock access to all our powerful scripts.',
+  subtitle: 'Choose a plan to access Sovereign scripts.',
   buttonText: 'Generate Key',
   steps: [
     { title: 'Click the Get Key Button',  description: 'Click the button below to be redirected to our secure key system.' },
     { title: 'Complete the Steps',        description: 'Follow the short tasks on the key page to verify you are human.' },
     { title: 'Enjoy the Script',          description: 'Copy your generated key, paste it into the UI, and you are ready to go.' },
   ],
+  premiumBadge: 'Recommended',
+  premiumCardFeatures: 'Instant whitelist\nNo key system\nKeyless on all games',
+  premiumCardButtonText: 'Get Premium',
+  freeCardTitle: 'Free Key',
+  freeCardLabel: 'with ads',
+  freeCardFeatures: 'Easy process\nSecure links\nFast delivery',
+  freeCardButtonText: 'Get Free Key',
+  linkvertiseLabel: 'Linkvertise',
+  linkvertiseUrl: 'https://linkvertise.com',
+  lootlabsLabel: 'Lootlabs',
+  lootlabsUrl: 'https://loot-labs.com',
 };
 
 const DEFAULT_PREMIUM = {
@@ -93,8 +104,7 @@ export function AdminPanel() {
   const [loadstring, setLoadstring]       = useLocalStorage('sovereign_loadstring', 'loadstring(game:HttpGet("https://sovereigns.dev/loader"))()');
   const [games, setGames]                 = useLocalStorage<Game[]>('sovereign_games', DEFAULT_GAMES);
   const [gamesPage, setGamesPage]         = useLocalStorage('sovereign_games_page', { subtitle: 'Powerful scripts for the most popular Roblox games.' });
-  const [siteInfo, setSiteInfo]           = useLocalStorage('sovereign_info', { name: 'Sovereign', tagline: 'PXG', discord: 'https://discord.gg' });
-  const [keyUrl, setKeyUrl]               = useLocalStorage('sovereign_key_url', 'https://jnkie.com/get-key/pxgkey');
+  const [siteInfo, setSiteInfo]           = useLocalStorage('sovereign_info', { name: 'Sovereign', tagline: 'PXG', discord: 'https://discord.gg', logoUrl: '' });
   const [keyPage, setKeyPage]             = useLocalStorage('sovereign_key_page', DEFAULT_KEY_PAGE);
   const [premium, setPremium]             = useLocalStorage('sovereign_premium', DEFAULT_PREMIUM);
 
@@ -120,6 +130,7 @@ export function AdminPanel() {
   };
 
   const setPrem = (k: string, v: string) => setPremium({ ...premium, [k]: v });
+  const setKP   = (k: string, v: string) => setKeyPage({ ...keyPage, [k]: v });
 
   return (
     <AnimatePresence>
@@ -193,20 +204,51 @@ export function AdminPanel() {
                   </div>
 
                   <div className="flex-1 overflow-y-auto p-5 space-y-5">
+
+                    {/* ── SITE ──────────────────────────────── */}
                     {activeTab === 'site' && (
                       <div className="space-y-5">
                         <SectionTitle>Site Information</SectionTitle>
                         <div className="grid grid-cols-2 gap-3">
                           <Field label="Hub Name">
-                            <Input value={siteInfo.name} onChange={(e)=>setSiteInfo({...siteInfo,name:e.target.value})} className="bg-black/50 border-primary/20"/>
+                            <Input value={(siteInfo as any).name} onChange={(e)=>setSiteInfo({...siteInfo as any,name:e.target.value})} className="bg-black/50 border-primary/20"/>
                           </Field>
                           <Field label="Tagline">
-                            <Input value={siteInfo.tagline} onChange={(e)=>setSiteInfo({...siteInfo,tagline:e.target.value})} className="bg-black/50 border-primary/20"/>
+                            <Input value={(siteInfo as any).tagline} onChange={(e)=>setSiteInfo({...siteInfo as any,tagline:e.target.value})} className="bg-black/50 border-primary/20"/>
                           </Field>
                         </div>
                         <Field label="Discord URL">
-                          <Input value={siteInfo.discord||''} onChange={(e)=>setSiteInfo({...siteInfo,discord:e.target.value})} className="bg-black/50 border-primary/20" placeholder="https://discord.gg/..."/>
+                          <Input value={(siteInfo as any).discord||''} onChange={(e)=>setSiteInfo({...siteInfo as any,discord:e.target.value})} className="bg-black/50 border-primary/20" placeholder="https://discord.gg/..."/>
                         </Field>
+
+                        <SectionTitle>Logo</SectionTitle>
+                        <div className="bg-primary/5 border border-primary/10 rounded-lg p-4 space-y-3">
+                          <Field label="Custom Logo URL (leave blank to use default)">
+                            <Input
+                              value={(siteInfo as any).logoUrl || ''}
+                              onChange={(e) => setSiteInfo({...siteInfo as any, logoUrl: e.target.value})}
+                              className="bg-black/50 border-primary/20 font-mono text-xs"
+                              placeholder="https://example.com/logo.png"
+                            />
+                          </Field>
+                          {(siteInfo as any).logoUrl && (
+                            <div className="flex items-center gap-3">
+                              <img src={(siteInfo as any).logoUrl} alt="Preview"
+                                className="w-12 h-12 object-contain rounded-lg border border-white/10 bg-black/30"
+                                onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.2'; }}
+                              />
+                              <div>
+                                <p className="text-xs text-muted-foreground">Logo preview</p>
+                                <button onClick={() => setSiteInfo({...siteInfo as any, logoUrl: ''})}
+                                  className="text-xs text-red-400 hover:text-red-300 mt-0.5">Reset to default</button>
+                              </div>
+                            </div>
+                          )}
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <ImageIcon size={11}/> Paste any direct image URL. Best results: square PNG with transparent background.
+                          </p>
+                        </div>
+
                         <SectionTitle>Change Admin Password</SectionTitle>
                         <div className="bg-primary/5 border border-primary/10 rounded-lg p-4 space-y-3">
                           <Field label="New Password">
@@ -217,8 +259,8 @@ export function AdminPanel() {
                             className="bg-primary text-black font-bold hover:brightness-110 text-xs h-8">
                             <ShieldCheck size={13} className="mr-1"/> Save Password
                           </Button>
-                          <p className="text-xs text-muted-foreground">You'll use the new password next time you open the admin panel.</p>
                         </div>
+
                         <div className="bg-[#0d0d0d] border border-white/5 rounded-lg p-4">
                           <div className="flex items-center gap-2 mb-1"><Palette size={13} className="text-primary"/><span className="text-sm font-medium text-white">Brand Colors</span></div>
                           <p className="text-xs text-muted-foreground">Gold (#FFD700) + black (#0d0d0d) — color picker coming soon.</p>
@@ -226,6 +268,7 @@ export function AdminPanel() {
                       </div>
                     )}
 
+                    {/* ── LOADSTRING ────────────────────────── */}
                     {activeTab === 'loadstring' && (
                       <div className="space-y-5">
                         <SectionTitle>Hub Loadstring</SectionTitle>
@@ -238,57 +281,100 @@ export function AdminPanel() {
                       </div>
                     )}
 
+                    {/* ── KEY PAGE ──────────────────────────── */}
                     {activeTab === 'keyPage' && (
                       <div className="space-y-5">
-                        <SectionTitle>Key Page — Header</SectionTitle>
+                        <SectionTitle>Page Header</SectionTitle>
                         <div className="grid grid-cols-2 gap-3">
                           <Field label="Title text">
-                            <Input value={keyPage.title} onChange={(e)=>setKeyPage({...keyPage,title:e.target.value})} className="bg-black/50 border-primary/20"/>
+                            <Input value={keyPage.title} onChange={(e)=>setKP('title',e.target.value)} className="bg-black/50 border-primary/20"/>
                           </Field>
                           <Field label="Highlighted word">
-                            <Input value={keyPage.titleHighlight} onChange={(e)=>setKeyPage({...keyPage,titleHighlight:e.target.value})} className="bg-black/50 border-primary/20"/>
+                            <Input value={keyPage.titleHighlight} onChange={(e)=>setKP('titleHighlight',e.target.value)} className="bg-black/50 border-primary/20"/>
                           </Field>
                         </div>
                         <Field label="Subtitle">
-                          <Textarea value={keyPage.subtitle} onChange={(e)=>setKeyPage({...keyPage,subtitle:e.target.value})} className="bg-black/50 border-primary/20 text-sm h-20"/>
+                          <Textarea value={keyPage.subtitle} onChange={(e)=>setKP('subtitle',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-16"/>
                         </Field>
-                        <SectionTitle>Key Page — Button</SectionTitle>
+
+                        <SectionTitle>Premium Plan Card</SectionTitle>
                         <div className="grid grid-cols-2 gap-3">
-                          <Field label="Button text">
-                            <Input value={keyPage.buttonText} onChange={(e)=>setKeyPage({...keyPage,buttonText:e.target.value})} className="bg-black/50 border-primary/20"/>
+                          <Field label="Badge text">
+                            <Input value={(keyPage as any).premiumBadge||''} onChange={(e)=>setKP('premiumBadge',e.target.value)} className="bg-black/50 border-primary/20" placeholder="Recommended"/>
                           </Field>
-                          <Field label="Button URL">
-                            <Input value={keyUrl} onChange={(e)=>setKeyUrl(e.target.value)} className="bg-black/50 border-primary/20 font-mono text-xs"/>
+                          <Field label="Button text">
+                            <Input value={(keyPage as any).premiumCardButtonText||''} onChange={(e)=>setKP('premiumCardButtonText',e.target.value)} className="bg-black/50 border-primary/20"/>
                           </Field>
                         </div>
-                        <SectionTitle>Key Page — Steps</SectionTitle>
-                        {(keyPage.steps||DEFAULT_KEY_PAGE.steps).map((step,i)=>(
+                        <Field label="Features (one per line)">
+                          <Textarea value={(keyPage as any).premiumCardFeatures||''} onChange={(e)=>setKP('premiumCardFeatures',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-24"/>
+                        </Field>
+
+                        <SectionTitle>Free Key Card</SectionTitle>
+                        <div className="grid grid-cols-3 gap-3">
+                          <Field label="Card title">
+                            <Input value={(keyPage as any).freeCardTitle||''} onChange={(e)=>setKP('freeCardTitle',e.target.value)} className="bg-black/50 border-primary/20"/>
+                          </Field>
+                          <Field label="Label (e.g. 'with ads')">
+                            <Input value={(keyPage as any).freeCardLabel||''} onChange={(e)=>setKP('freeCardLabel',e.target.value)} className="bg-black/50 border-primary/20"/>
+                          </Field>
+                          <Field label="Button text">
+                            <Input value={(keyPage as any).freeCardButtonText||''} onChange={(e)=>setKP('freeCardButtonText',e.target.value)} className="bg-black/50 border-primary/20"/>
+                          </Field>
+                        </div>
+                        <Field label="Features (one per line)">
+                          <Textarea value={(keyPage as any).freeCardFeatures||''} onChange={(e)=>setKP('freeCardFeatures',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-24"/>
+                        </Field>
+
+                        <SectionTitle>Key Links</SectionTitle>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Field label="Linkvertise label">
+                            <Input value={(keyPage as any).linkvertiseLabel||''} onChange={(e)=>setKP('linkvertiseLabel',e.target.value)} className="bg-black/50 border-primary/20"/>
+                          </Field>
+                          <Field label="Linkvertise URL">
+                            <Input value={(keyPage as any).linkvertiseUrl||''} onChange={(e)=>setKP('linkvertiseUrl',e.target.value)} className="bg-black/50 border-primary/20 font-mono text-xs"/>
+                          </Field>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Field label="Lootlabs label">
+                            <Input value={(keyPage as any).lootlabsLabel||''} onChange={(e)=>setKP('lootlabsLabel',e.target.value)} className="bg-black/50 border-primary/20"/>
+                          </Field>
+                          <Field label="Lootlabs URL">
+                            <Input value={(keyPage as any).lootlabsUrl||''} onChange={(e)=>setKP('lootlabsUrl',e.target.value)} className="bg-black/50 border-primary/20 font-mono text-xs"/>
+                          </Field>
+                        </div>
+
+                        <SectionTitle>How It Works — Steps</SectionTitle>
+                        {(keyPage.steps||DEFAULT_KEY_PAGE.steps).map((s,i)=>(
                           <div key={i} className="bg-black/30 border border-white/5 rounded-lg p-4 space-y-2">
                             <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Step {i+1}</p>
                             <Field label="Title">
-                              <Input value={step.title} onChange={(e)=>updateStep(i,'title',e.target.value)} className="bg-black/50 border-primary/20"/>
+                              <Input value={s.title} onChange={(e)=>updateStep(i,'title',e.target.value)} className="bg-black/50 border-primary/20"/>
                             </Field>
                             <Field label="Description">
-                              <Textarea value={step.description} onChange={(e)=>updateStep(i,'description',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-16"/>
+                              <Textarea value={s.description} onChange={(e)=>updateStep(i,'description',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-16"/>
                             </Field>
                           </div>
                         ))}
                       </div>
                     )}
 
+                    {/* ── GAMES ─────────────────────────────── */}
                     {activeTab === 'games' && (
                       <div className="space-y-5">
                         <SectionTitle>Games Page</SectionTitle>
                         <Field label="Subtitle text">
                           <Input value={gamesPage.subtitle} onChange={(e)=>setGamesPage({...gamesPage,subtitle:e.target.value})} className="bg-black/50 border-primary/20"/>
                         </Field>
+
                         <div className="flex items-center justify-between border-t border-white/5 pt-4">
                           <SectionTitle>Game Cards</SectionTitle>
                           <Button variant="outline" size="sm" onClick={addGame} className="border-primary/20 text-xs h-8">
                             <Plus size={13} className="mr-1"/> Add Game
                           </Button>
                         </div>
-                        <p className="text-xs text-muted-foreground -mt-2">Paste a direct image URL for the game logo (Roblox thumbnail URL works).</p>
+                        <p className="text-xs text-muted-foreground -mt-2">Paste a direct image URL for the game logo.</p>
+
                         <div className="space-y-4">
                           {games.map((game,i)=>(
                             <div key={i} className="bg-black/30 border border-white/5 rounded-lg p-4 space-y-3">
@@ -319,6 +405,7 @@ export function AdminPanel() {
                       </div>
                     )}
 
+                    {/* ── PREMIUM ───────────────────────────── */}
                     {activeTab === 'premium' && (
                       <div className="space-y-5">
                         <SectionTitle>Page Header</SectionTitle>
@@ -329,6 +416,7 @@ export function AdminPanel() {
                         <Field label="Subtitle">
                           <Textarea value={premium.pageSubtitle} onChange={(e)=>setPrem('pageSubtitle',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-16"/>
                         </Field>
+
                         <SectionTitle>Standard Tier</SectionTitle>
                         <div className="grid grid-cols-3 gap-3">
                           <Field label="Name"><Input value={premium.standardName} onChange={(e)=>setPrem('standardName',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
@@ -341,10 +429,11 @@ export function AdminPanel() {
                         <Field label="Button text">
                           <Input value={premium.standardButtonText} onChange={(e)=>setPrem('standardButtonText',e.target.value)} className="bg-black/50 border-primary/20"/>
                         </Field>
+
                         <SectionTitle>Premium Tier</SectionTitle>
                         <div className="grid grid-cols-2 gap-3">
                           <Field label="Name"><Input value={premium.premiumName} onChange={(e)=>setPrem('premiumName',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
-                          <Field label="Badge label"><Input value={premium.premiumBadge} onChange={(e)=>setPrem('premiumBadge',e.target.value)} className="bg-black/50 border-primary/20" placeholder="e.g. Most Popular"/></Field>
+                          <Field label="Badge label"><Input value={premium.premiumBadge} onChange={(e)=>setPrem('premiumBadge',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <Field label="Price"><Input value={premium.premiumPrice} onChange={(e)=>setPrem('premiumPrice',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
@@ -357,6 +446,7 @@ export function AdminPanel() {
                           <Field label="Button text"><Input value={premium.premiumButtonText} onChange={(e)=>setPrem('premiumButtonText',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
                           <Field label="Button URL"><Input value={premium.premiumButtonUrl} onChange={(e)=>setPrem('premiumButtonUrl',e.target.value)} className="bg-black/50 border-primary/20 font-mono text-xs" placeholder="#"/></Field>
                         </div>
+
                         <SectionTitle>"Why Premium" Section</SectionTitle>
                         <Field label="Section title"><Input value={premium.whyTitle} onChange={(e)=>setPrem('whyTitle',e.target.value)} className="bg-black/50 border-primary/20"/></Field>
                         {([
@@ -372,6 +462,7 @@ export function AdminPanel() {
                         ))}
                       </div>
                     )}
+
                   </div>
                 </div>
 
