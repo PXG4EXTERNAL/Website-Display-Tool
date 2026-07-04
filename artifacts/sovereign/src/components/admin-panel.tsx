@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown, KeyRound, X, Plus, Trash2, Save,
@@ -99,6 +99,16 @@ export function AdminPanel() {
   const [newPw, setNewPw]       = useState('');
   const [error, setError]       = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>('site');
+
+  // Skip password prompt when already authenticated
+  useEffect(() => {
+    if (isAdminOpen && isAdmin) {
+      setStep('panel');
+    } else if (!isAdminOpen) {
+      // Reset to password step only when the panel closes while logged out
+      if (!isAdmin) setStep('password');
+    }
+  }, [isAdminOpen, isAdmin]);
 
   const [adminPassword, setAdminPassword] = useLocalStorage('sovereign_admin_pw', 'pugunyt0623763408sovereign');
   const [loadstring, setLoadstring]       = useLocalStorage('sovereign_loadstring', 'loadstring(game:HttpGet("https://sovereigns.dev/loader"))()');
@@ -325,6 +335,24 @@ export function AdminPanel() {
                         <Field label="Features (one per line)">
                           <Textarea value={(keyPage as any).freeCardFeatures||''} onChange={(e)=>setKP('freeCardFeatures',e.target.value)} className="bg-black/50 border-primary/20 text-sm h-24"/>
                         </Field>
+
+                        <SectionTitle>Premium Banner (on key system page)</SectionTitle>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Field label="Banner headline">
+                            <Input value={(keyPage as any).premiumBannerText||''} onChange={(e)=>setKP('premiumBannerText',e.target.value)} className="bg-black/50 border-primary/20" placeholder="GET PREMIUM KEY"/>
+                          </Field>
+                          <Field label="Sub-text">
+                            <Input value={(keyPage as any).premiumBannerSub||''} onChange={(e)=>setKP('premiumBannerSub',e.target.value)} className="bg-black/50 border-primary/20" placeholder="Skip the key system entirely"/>
+                          </Field>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Field label="Price">
+                            <Input value={(keyPage as any).premiumBannerPrice||''} onChange={(e)=>setKP('premiumBannerPrice',e.target.value)} className="bg-black/50 border-primary/20" placeholder="$4.99"/>
+                          </Field>
+                          <Field label="Period label">
+                            <Input value={(keyPage as any).premiumBannerPeriod||''} onChange={(e)=>setKP('premiumBannerPeriod',e.target.value)} className="bg-black/50 border-primary/20" placeholder="Forever"/>
+                          </Field>
+                        </div>
 
                         <SectionTitle>Key Links</SectionTitle>
                         <div className="grid grid-cols-2 gap-3">
