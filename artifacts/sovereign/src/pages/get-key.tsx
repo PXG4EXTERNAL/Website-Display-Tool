@@ -41,11 +41,6 @@ export default function GetKey() {
     <div className="max-w-5xl mx-auto px-4 py-12 md:py-20">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-14">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full">
-            <Key className="w-7 h-7 text-primary" />
-          </div>
-        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-3">
           {keyPage.title}{' '}<span className="text-primary gold-glow">{keyPage.titleHighlight}</span>
         </h1>

@@ -30,9 +30,6 @@ export default function Games() {
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
         className="text-center mb-10"
       >
-        <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mb-4">
-          <Gamepad2 className="w-7 h-7 text-primary" />
-        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-tight mb-3">
           Supported <span className="text-primary gold-glow">Games</span>
         </h1>
